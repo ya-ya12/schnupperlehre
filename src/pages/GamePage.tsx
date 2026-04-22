@@ -17,7 +17,7 @@ export function GamePage() {
 
   const GameComponent = selected.component
   return (
-    <section className="game-page">
+    <section className={`game-page ${selected.themeClass}`}>
       <button type="button" className="back-btn" onClick={() => navigate('/')}>
         Back to menu
       </button>

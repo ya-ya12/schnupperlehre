@@ -4,9 +4,10 @@ type GameHUDProps = {
   level?: number
   onPause: () => void
   onRestart: () => void
+  onExit?: () => void
 }
 
-export function GameHUD({ score, lives, level, onPause, onRestart }: GameHUDProps) {
+export function GameHUD({ score, lives, level, onPause, onRestart, onExit }: GameHUDProps) {
   return (
     <section className="hud" aria-label="Game status and controls">
       <div className="hud-stats">
@@ -21,6 +22,11 @@ export function GameHUD({ score, lives, level, onPause, onRestart }: GameHUDProp
         <button onClick={onRestart} type="button">
           Restart
         </button>
+        {onExit ? (
+          <button className="exit-btn" onClick={onExit} type="button">
+            Exit
+          </button>
+        ) : null}
       </div>
     </section>
   )

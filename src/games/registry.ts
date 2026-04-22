@@ -11,13 +11,38 @@ type GameMeta = {
   name: string
   description: string
   component: ComponentType
+  themeClass: string
 }
 
 export const gameRegistry: GameMeta[] = [
-  { id: 'tetris', name: 'Tetris', description: 'Stack blocks and clear lines.', component: TetrisGame },
-  { id: 'pacman', name: 'Pacman', description: 'Eat pellets and avoid ghosts.', component: PacmanGame },
-  { id: 'pong', name: 'Pong', description: 'Classic paddle duel vs CPU.', component: PongGame },
-  { id: 'connect4', name: '4 Gewinnt', description: 'Drop tokens and connect four.', component: Connect4Game },
+  {
+    id: 'tetris',
+    name: 'Tetris',
+    description: 'Stapple die blöcke und lösche die reihen',
+    component: TetrisGame,
+    themeClass: 'game-theme-tetris',
+  },
+  {
+    id: 'pacman',
+    name: 'Pacman',
+    description: 'Iss alle Punkte und weiche den Geistern aus.',
+    component: PacmanGame,
+    themeClass: 'game-theme-pacman',
+  },
+  {
+    id: 'pong',
+    name: 'Pong',
+    description: 'Klassisches Schläger-Duell game',
+    component: PongGame,
+    themeClass: 'game-theme-pong',
+  },
+  {
+    id: 'connect4',
+    name: '4 Gewinnt',
+    description: 'Lass die kreise fallen und verbinde vier',
+    component: Connect4Game,
+    themeClass: 'game-theme-connect4',
+  },
 ]
 
 export const gameById = new Map(gameRegistry.map((game) => [game.id, game]))

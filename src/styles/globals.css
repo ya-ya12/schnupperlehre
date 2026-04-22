@@ -1,7 +1,7 @@
 :root {
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  color: #e2e8f0;
-  background: #020617;
+  color: #fff1fb;
+  background: #3f0d2f;
 }
 
 * {
@@ -11,6 +11,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  background: radial-gradient(circle at top, #ff6dd0, #8e1e62 42%, #4d113a 100%);
 }
 
 a,
@@ -21,8 +22,8 @@ button {
 button,
 select {
   border-radius: 0.5rem;
-  border: 1px solid #334155;
-  background: #0f172a;
+  border: 1px solid #f9a8d4;
+  background: #7a1f56;
   padding: 0.4rem 0.7rem;
 }
 
@@ -32,12 +33,24 @@ select {
 
 .top-nav {
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid #f472b6;
+  background: rgb(76 16 56 / 60%);
 }
 
 .brand {
+  font-family: "Courier New", "Lucida Console", Monaco, monospace;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  text-shadow: 2px 2px 0 #5b133f, 4px 4px 0 #29091d;
   text-decoration: none;
+}
+
+.menu-header h1 {
+  font-family: "Courier New", "Lucida Console", Monaco, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-shadow: 2px 2px 0 #5b133f, 4px 4px 0 #29091d;
 }
 
 .page-content {
@@ -46,8 +59,14 @@ select {
   margin: 0 auto;
 }
 
+.game-shell .page-content {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
 .menu-header p {
-  color: #94a3b8;
+  color: #ffd5ef;
 }
 
 .settings {
@@ -64,10 +83,10 @@ select {
 }
 
 .game-card {
-  border: 1px solid #334155;
+  border: 1px solid #f472b6;
   border-radius: 0.75rem;
   padding: 1rem;
-  background: #0b1222;
+  background: rgb(124 36 89 / 72%);
 }
 
 .game-card a {
@@ -76,12 +95,17 @@ select {
 }
 
 .game-page {
-  display: grid;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 100vh;
+  padding: 0.35rem 0.5rem 0.5rem;
 }
 
 .back-btn {
   width: fit-content;
+  align-self: flex-start;
 }
 
 .hud {
@@ -101,16 +125,36 @@ select {
   gap: 0.5rem;
 }
 
+.exit-btn {
+  background: #ff1f3d;
+  border-color: #ffe4ea;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 18%);
+}
+
 .canvas-game {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   gap: 0.75rem;
-  width: fit-content;
+  width: 100%;
+  flex: 1;
+}
+
+.canvas-stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
 }
 
 .game-canvas {
-  border: 1px solid #334155;
+  border: 1px solid #f9a8d4;
   border-radius: 0.5rem;
-  max-width: 100%;
+  width: min(99vw, calc((100vh - 160px) * (var(--game-ratio))));
+  max-height: calc(100vh - 160px);
+  height: auto;
+  touch-action: none;
 }
 
 .touch-controls {
@@ -122,14 +166,14 @@ select {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgb(2 6 23 / 75%);
+  background: rgb(55 12 40 / 78%);
   display: grid;
   place-items: center;
 }
 
 .overlay-content {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: #751f53;
+  border: 1px solid #f9a8d4;
   border-radius: 0.75rem;
   padding: 1rem;
   width: min(360px, 90vw);
@@ -141,26 +185,54 @@ select {
 }
 
 .connect4-board {
+  --connect4-cell-size: clamp(54px, 11vmin, 96px);
   display: grid;
-  grid-template-columns: repeat(7, 52px);
-  gap: 0.35rem;
+  grid-template-columns: repeat(7, var(--connect4-cell-size));
+  gap: clamp(0.18rem, 1vmin, 0.5rem);
   width: fit-content;
+  margin: 0 auto;
+}
+
+.connect4-game {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
 }
 
 .cell {
-  width: 52px;
-  height: 52px;
+  width: var(--connect4-cell-size);
+  height: var(--connect4-cell-size);
   border-radius: 999px;
-  border: 1px solid #1e293b;
-  background: #0f172a;
+  border: 1px solid #f9a8d4;
+  background: #5e1844;
 }
 
 .player-1 {
-  background: #eab308;
+  background: #ffe600;
 }
 
 .player-2 {
-  background: #ef4444;
+  background: #ff1f3d;
+}
+
+.game-theme-tetris {
+  background: linear-gradient(180deg, rgb(35 19 65 / 55%), rgb(13 6 30 / 70%));
+}
+
+.game-theme-pacman {
+  background: linear-gradient(180deg, rgb(88 28 135 / 48%), rgb(45 11 76 / 70%));
+}
+
+.game-theme-pong {
+  background: linear-gradient(180deg, rgb(11 84 107 / 48%), rgb(5 41 52 / 70%));
+}
+
+.game-theme-connect4 {
+  background: linear-gradient(180deg, rgb(124 45 18 / 42%), rgb(74 23 8 / 68%));
 }
 
 @media (max-width: 768px) {

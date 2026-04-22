@@ -2,29 +2,30 @@ import type { GameAction } from '../../games/core/types'
 
 type TouchControlsProps = {
   onAction: (action: GameAction) => void
+  actions?: GameAction[]
 }
 
-export function TouchControls({ onAction }: TouchControlsProps) {
+const labels: Record<GameAction, string> = {
+  MOVE_LEFT: 'Left',
+  MOVE_RIGHT: 'Right',
+  MOVE_UP: 'Up',
+  MOVE_DOWN: 'Down',
+  ROTATE: 'Rotate',
+  DROP: 'Drop',
+  SELECT: 'Select',
+  PAUSE: 'Pause',
+}
+
+const defaultActions: GameAction[] = ['MOVE_LEFT', 'MOVE_RIGHT', 'MOVE_UP', 'MOVE_DOWN', 'ROTATE', 'DROP']
+
+export function TouchControls({ onAction, actions = defaultActions }: TouchControlsProps) {
   return (
     <div className="touch-controls" aria-label="Touch controls">
-      <button type="button" onClick={() => onAction('MOVE_LEFT')}>
-        Left
-      </button>
-      <button type="button" onClick={() => onAction('MOVE_RIGHT')}>
-        Right
-      </button>
-      <button type="button" onClick={() => onAction('MOVE_UP')}>
-        Up
-      </button>
-      <button type="button" onClick={() => onAction('MOVE_DOWN')}>
-        Down
-      </button>
-      <button type="button" onClick={() => onAction('ROTATE')}>
-        Rotate
-      </button>
-      <button type="button" onClick={() => onAction('DROP')}>
-        Drop
-      </button>
+      {actions.map((action) => (
+        <button key={action} type="button" onClick={() => onAction(action)}>
+          {labels[action]}
+        </button>
+      ))}
     </div>
   )
 }

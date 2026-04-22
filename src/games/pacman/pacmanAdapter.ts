@@ -1,15 +1,15 @@
 import type { GameAction, GameAdapter, GameSnapshot } from '../core/types'
 
-const TILE = 20
+const TILE = 24
 const MAP = [
   '###############',
-  '#.............#',
-  '#.###.###.###.#',
-  '#o#.......#..o#',
+  '#...#...#...#.#',
+  '#.#.#.#.#.#.#.#',
+  '#o#...#.#...#o#',
   '#.###.#.#.###.#',
-  '#.....#.#.....#',
-  '#####.#.#.#####',
-  '#.............#',
+  '#...#...#...#.#',
+  '#.#.#.###.#.#.#',
+  '#...#.....#...#',
   '###############',
 ]
 
@@ -46,6 +46,18 @@ export class PacmanAdapter implements GameAdapter {
 
   private isWall(pos: Pos) {
     return MAP[pos.y]?.[pos.x] === '#'
+  }
+
+  setDirectionFromPointer(pointerX: number, pointerY: number) {
+    const currentX = this.pacman.x * TILE + TILE / 2
+    const currentY = this.pacman.y * TILE + TILE / 2
+    const dx = pointerX - currentX
+    const dy = pointerY - currentY
+    if (Math.abs(dx) >= Math.abs(dy)) {
+      this.dir = { x: dx >= 0 ? 1 : -1, y: 0 }
+      return
+    }
+    this.dir = { x: 0, y: dy >= 0 ? 1 : -1 }
   }
 
   update(deltaMs: number) {
@@ -96,7 +108,7 @@ export class PacmanAdapter implements GameAdapter {
     ctx.beginPath()
     ctx.arc(this.pacman.x * TILE + TILE / 2, this.pacman.y * TILE + TILE / 2, TILE / 2 - 2, 0, Math.PI * 2)
     ctx.fill()
-    ctx.fillStyle = '#ef4444'
+    ctx.fillStyle = '#ff1f3d'
     ctx.fillRect(this.ghost.x * TILE + 2, this.ghost.y * TILE + 2, TILE - 4, TILE - 4)
   }
 

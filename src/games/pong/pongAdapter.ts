@@ -116,6 +116,12 @@ export class PongAdapter implements GameAdapter {
     this.state.playerY = Math.max(0, Math.min(HEIGHT - PADDLE_HEIGHT, this.state.playerY))
   }
 
+  setPlayerYFromPointer(pointerY: number) {
+    if (this.state.status !== 'running') return
+    this.state.playerY = pointerY - PADDLE_HEIGHT / 2
+    this.state.playerY = Math.max(0, Math.min(HEIGHT - PADDLE_HEIGHT, this.state.playerY))
+  }
+
   getSnapshot(): GameSnapshot {
     return {
       score: this.state.playerScore,

@@ -1,8 +1,8 @@
 import type { GameAction, GameAdapter, GameSnapshot } from '../core/types'
 
-const COLS = 10
+const COLS = 16
 const ROWS = 20
-const CELL = 20
+const CELL = 24
 
 type Grid = number[][]
 type Piece = { shape: number[][]; x: number; y: number; color: number }
@@ -34,6 +34,15 @@ const PIECES = [
     [0, 1, 1],
   ],
 ]
+
+const TETRIS_COLORS: Record<number, string> = {
+  1: '#38bdf8',
+  2: '#f97316',
+  3: '#34d399',
+  4: '#f472b6',
+  5: '#a78bfa',
+  6: '#fde047',
+}
 
 export class TetrisAdapter implements GameAdapter {
   private board: Grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0))
@@ -124,21 +133,63 @@ export class TetrisAdapter implements GameAdapter {
     if (!this.collides(next)) this.piece = next
   }
 
+  private getLandingY(): number {
+    let landingY = this.piece.y
+    let probe = { ...this.piece, y: landingY }
+    while (!this.collides({ ...probe, y: probe.y + 1 })) {
+      probe = { ...probe, y: probe.y + 1 }
+      landingY = probe.y
+    }
+    return landingY
+  }
+
   render(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = '#0b1020'
     ctx.fillRect(0, 0, COLS * CELL, ROWS * CELL)
+    ctx.strokeStyle = '#334155'
+    ctx.lineWidth = 1
+    for (let x = 0; x <= COLS; x += 1) {
+      ctx.beginPath()
+      ctx.moveTo(x * CELL + 0.5, 0)
+      ctx.lineTo(x * CELL + 0.5, ROWS * CELL)
+      ctx.stroke()
+    }
+    for (let y = 0; y <= ROWS; y += 1) {
+      ctx.beginPath()
+      ctx.moveTo(0, y * CELL + 0.5)
+      ctx.lineTo(COLS * CELL, y * CELL + 0.5)
+      ctx.stroke()
+    }
+    ctx.strokeStyle = '#f9a8d4'
+    ctx.lineWidth = 4
+    ctx.strokeRect(2, 2, COLS * CELL - 4, ROWS * CELL - 4)
     for (let y = 0; y < ROWS; y += 1) {
       for (let x = 0; x < COLS; x += 1) {
         if (!this.board[y][x]) continue
-        ctx.fillStyle = '#60a5fa'
-        ctx.fillRect(x * CELL, y * CELL, CELL - 1, CELL - 1)
+        ctx.fillStyle = TETRIS_COLORS[this.board[y][x]] ?? '#60a5fa'
+        ctx.fillRect(x * CELL + 1, y * CELL + 1, CELL - 2, CELL - 2)
+        ctx.strokeStyle = '#f8fafc'
+        ctx.strokeRect(x * CELL + 1.5, y * CELL + 1.5, CELL - 3, CELL - 3)
       }
     }
     for (let y = 0; y < this.piece.shape.length; y += 1) {
       for (let x = 0; x < this.piece.shape[y].length; x += 1) {
         if (!this.piece.shape[y][x]) continue
-        ctx.fillStyle = '#f59e0b'
-        ctx.fillRect((this.piece.x + x) * CELL, (this.piece.y + y) * CELL, CELL - 1, CELL - 1)
+        ctx.fillStyle = TETRIS_COLORS[this.piece.color] ?? '#f59e0b'
+        ctx.fillRect((this.piece.x + x) * CELL + 1, (this.piece.y + y) * CELL + 1, CELL - 2, CELL - 2)
+        ctx.strokeStyle = '#ffffff'
+        ctx.strokeRect((this.piece.x + x) * CELL + 1.5, (this.piece.y + y) * CELL + 1.5, CELL - 3, CELL - 3)
+      }
+    }
+    const landingY = this.getLandingY()
+    if (landingY > this.piece.y) {
+      ctx.strokeStyle = '#ffffff'
+      ctx.lineWidth = 2
+      for (let y = 0; y < this.piece.shape.length; y += 1) {
+        for (let x = 0; x < this.piece.shape[y].length; x += 1) {
+          if (!this.piece.shape[y][x]) continue
+          ctx.strokeRect((this.piece.x + x) * CELL + 4, (landingY + y) * CELL + 4, CELL - 8, CELL - 8)
+        }
       }
     }
   }

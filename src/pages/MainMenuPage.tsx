@@ -2,22 +2,50 @@ import { Link } from 'react-router-dom'
 import { useAppStore } from '../app/store/useAppStore'
 import { gameRegistry } from '../games/registry'
 
+const copy = {
+  en: {
+    title: 'Game Arcade',
+    subtitle: 'Wähle ein spiel aus und starte sofort',
+    difficulty: 'Difficulty',
+    soundEnabled: 'Sound Enabled',
+    play: 'Play',
+    chooseLanguage: 'Choose language',
+    chooseLanguageDescription: 'Select your preferred language before entering the arcade.',
+    english: 'English',
+    german: 'German',
+  },
+  de: {
+    title: 'Game Arcade',
+    subtitle: 'Wähle ein spiel aus und starte sofort',
+    difficulty: 'Schwierigkeit',
+    soundEnabled: 'Sound aktivieren',
+    play: 'Spielen',
+    chooseLanguage: 'Sprache waehlen',
+    chooseLanguageDescription: 'Bitte waehle deine Sprache, bevor du startest.',
+    english: 'Englisch',
+    german: 'Deutsch',
+  },
+} as const
+
 export function MainMenuPage() {
   const difficulty = useAppStore((state) => state.difficulty)
   const setDifficulty = useAppStore((state) => state.setDifficulty)
   const soundEnabled = useAppStore((state) => state.soundEnabled)
   const setSoundEnabled = useAppStore((state) => state.setSoundEnabled)
+  const language = useAppStore((state) => state.language)
+  const setLanguage = useAppStore((state) => state.setLanguage)
+  const activeCopy = copy[language ?? 'en']
 
   return (
     <div className="menu-page">
       <section className="menu-header">
-        <h1>Arcade Hub</h1>
-        <p>Choose a game and play instantly.</p>
+        <h1>{activeCopy.title}</h1>
+        <p>{activeCopy.subtitle}</p>
       </section>
 
       <section className="settings">
         <label>
-          Difficulty
+          {activeCopy.difficulty}
           <select
             value={difficulty}
             onChange={(event) => setDifficulty(event.target.value as 'easy' | 'normal' | 'hard')}
@@ -33,7 +61,7 @@ export function MainMenuPage() {
             onChange={(event) => setSoundEnabled(event.target.checked)}
             type="checkbox"
           />
-          Sound Enabled
+          {activeCopy.soundEnabled}
         </label>
       </section>
 
@@ -42,10 +70,27 @@ export function MainMenuPage() {
           <article key={game.id} className="game-card">
             <h2>{game.name}</h2>
             <p>{game.description}</p>
-            <Link to={`/game/${game.id}`}>Play</Link>
+            <Link to={`/game/${game.id}`}>{activeCopy.play}</Link>
           </article>
         ))}
       </section>
+
+      {!language ? (
+        <div className="overlay" role="dialog" aria-modal="true">
+          <div className="overlay-content">
+            <h2>{activeCopy.chooseLanguage}</h2>
+            <p>{activeCopy.chooseLanguageDescription}</p>
+            <div className="overlay-actions">
+              <button type="button" onClick={() => setLanguage('en')}>
+                {activeCopy.english}
+              </button>
+              <button type="button" onClick={() => setLanguage('de')}>
+                {activeCopy.german}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
