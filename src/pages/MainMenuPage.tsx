@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAppStore } from '../app/store/useAppStore'
 import { gameRegistry } from '../games/registry'
 
@@ -28,6 +28,7 @@ const copy = {
 } as const
 
 export function MainMenuPage() {
+  const navigate = useNavigate()
   const difficulty = useAppStore((state) => state.difficulty)
   const setDifficulty = useAppStore((state) => state.setDifficulty)
   const soundEnabled = useAppStore((state) => state.soundEnabled)
@@ -67,10 +68,29 @@ export function MainMenuPage() {
 
       <section className="game-grid">
         {gameRegistry.map((game) => (
-          <article key={game.id} className="game-card">
+          <article
+            key={game.id}
+            className="game-card"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate(`/game/${game.id}`)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                navigate(`/game/${game.id}`)
+              }
+            }}
+          >
             <h2>{game.name}</h2>
             <p>{game.description}</p>
-            <Link to={`/game/${game.id}`}>{activeCopy.play}</Link>
+            <Link
+              to={`/game/${game.id}`}
+              onClick={(event) => {
+                event.stopPropagation()
+              }}
+            >
+              {activeCopy.play}
+            </Link>
           </article>
         ))}
       </section>

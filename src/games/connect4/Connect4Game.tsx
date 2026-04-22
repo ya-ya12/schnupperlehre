@@ -15,6 +15,38 @@ function simulateDrop(board: Board, col: number, player: 1 | 2): Board | null {
   return row === -1 ? null : next
 }
 
+function scoreWindow(window: number[]): number {
+  const cpuCount = window.filter((cell) => cell === 2).length
+  const playerCount = window.filter((cell) => cell === 1).length
+  const emptyCount = window.filter((cell) => cell === 0).length
+  if (cpuCount === 4) return 100
+  if (cpuCount === 3 && emptyCount === 1) return 10
+  if (cpuCount === 2 && emptyCount === 2) return 3
+  if (playerCount === 3 && emptyCount === 1) return -12
+  return 0
+}
+
+function scoreBoard(board: Board): number {
+  const rows = board.length
+  const cols = board[0].length
+  let score = 0
+  const centerCol = Math.floor(cols / 2)
+  for (let row = 0; row < rows; row += 1) {
+    if (board[row][centerCol] === 2) score += 4
+  }
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = 0; col <= cols - 4; col += 1) {
+      score += scoreWindow([board[row][col], board[row][col + 1], board[row][col + 2], board[row][col + 3]])
+    }
+  }
+  for (let row = 0; row <= rows - 4; row += 1) {
+    for (let col = 0; col < cols; col += 1) {
+      score += scoreWindow([board[row][col], board[row + 1][col], board[row + 2][col], board[row + 3][col]])
+    }
+  }
+  return score
+}
+
 function pickCpuMove(board: Board, difficulty: 'easy' | 'normal' | 'hard'): number {
   const options = getValidColumns(board)
   if (!options.length) return 0
@@ -25,7 +57,7 @@ function pickCpuMove(board: Board, difficulty: 'easy' | 'normal' | 'hard'): numb
     if (winBoard && checkWinner(winBoard, 2)) return col
   }
 
-  const blockChance = difficulty === 'easy' ? 0.35 : difficulty === 'hard' ? 0.8 : 0.55
+  const blockChance = difficulty === 'easy' ? 0.35 : difficulty === 'hard' ? 1 : 0.55
   if (Math.random() < blockChance) {
     for (const col of options) {
       const blockBoard = simulateDrop(board, col, 1)
@@ -33,11 +65,31 @@ function pickCpuMove(board: Board, difficulty: 'easy' | 'normal' | 'hard'): numb
     }
   }
 
-  const centerPreference = difficulty === 'easy' ? 0.25 : difficulty === 'hard' ? 0.65 : 0.45
+  const centerPreference = difficulty === 'easy' ? 0.25 : difficulty === 'hard' ? 0.85 : 0.45
   if (Math.random() < centerPreference) {
     const center = 3
     const sorted = [...options].sort((a, b) => Math.abs(a - center) - Math.abs(b - center))
     return sorted[0] ?? options[0]
+  }
+
+  if (difficulty === 'hard') {
+    let bestCol = options[0]
+    let bestScore = Number.NEGATIVE_INFINITY
+    for (const col of options) {
+      const next = simulateDrop(board, col, 2)
+      if (!next) continue
+      // Avoid moves that give player an instant response-win.
+      const playerCanWin = getValidColumns(next).some((playerCol) => {
+        const playerNext = simulateDrop(next, playerCol, 1)
+        return playerNext ? checkWinner(playerNext, 1) : false
+      })
+      const score = scoreBoard(next) + (playerCanWin ? -50 : 0)
+      if (score > bestScore) {
+        bestScore = score
+        bestCol = col
+      }
+    }
+    return bestCol
   }
 
   return options[Math.floor(Math.random() * options.length)] ?? 0

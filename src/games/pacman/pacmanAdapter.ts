@@ -24,10 +24,12 @@ export class PacmanAdapter implements GameAdapter {
   private lives = 3
   private pellets = new Set<string>()
   private speedMs: number
+  private difficulty: 'easy' | 'normal' | 'hard'
   private elapsed = 0
 
   constructor(difficulty: 'easy' | 'normal' | 'hard') {
-    this.speedMs = difficulty === 'easy' ? 170 : difficulty === 'hard' ? 100 : 130
+    this.difficulty = difficulty
+    this.speedMs = difficulty === 'easy' ? 180 : difficulty === 'hard' ? 80 : 130
     this.seedPellets()
   }
 
@@ -76,8 +78,19 @@ export class PacmanAdapter implements GameAdapter {
 
     const gx = Math.sign(this.pacman.x - this.ghost.x)
     const gy = Math.sign(this.pacman.y - this.ghost.y)
-    const ghostTry = Math.random() > 0.5 ? { x: this.ghost.x + gx, y: this.ghost.y } : { x: this.ghost.x, y: this.ghost.y + gy }
-    if (!this.isWall(ghostTry)) this.ghost = ghostTry
+    const horizontalTry = { x: this.ghost.x + gx, y: this.ghost.y }
+    const verticalTry = { x: this.ghost.x, y: this.ghost.y + gy }
+    const prioritizeHorizontal = Math.abs(this.pacman.x - this.ghost.x) >= Math.abs(this.pacman.y - this.ghost.y)
+    const orderedMoves =
+      this.difficulty === 'hard'
+        ? prioritizeHorizontal
+          ? [horizontalTry, verticalTry]
+          : [verticalTry, horizontalTry]
+        : Math.random() > 0.5
+          ? [horizontalTry, verticalTry]
+          : [verticalTry, horizontalTry]
+    if (!this.isWall(orderedMoves[0])) this.ghost = orderedMoves[0]
+    else if (!this.isWall(orderedMoves[1])) this.ghost = orderedMoves[1]
 
     if (this.ghost.x === this.pacman.x && this.ghost.y === this.pacman.y) {
       this.lives -= 1

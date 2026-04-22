@@ -54,7 +54,7 @@ export class TetrisAdapter implements GameAdapter {
   private speed: number
 
   constructor(difficulty: 'easy' | 'normal' | 'hard') {
-    this.speed = difficulty === 'easy' ? 700 : difficulty === 'hard' ? 350 : 500
+    this.speed = difficulty === 'easy' ? 760 : difficulty === 'hard' ? 230 : 500
   }
 
   private newPiece(): Piece {

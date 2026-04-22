@@ -29,13 +29,14 @@ export class PongAdapter implements GameAdapter {
   }
 
   private createState(): PongState {
+    const speedFactor = this.difficulty === 'easy' ? 0.9 : this.difficulty === 'hard' ? 1.35 : 1
     return {
       playerY: HEIGHT / 2 - PADDLE_HEIGHT / 2,
       cpuY: HEIGHT / 2 - PADDLE_HEIGHT / 2,
       ballX: WIDTH / 2,
       ballY: HEIGHT / 2,
-      ballVx: 0.23,
-      ballVy: 0.19,
+      ballVx: 0.23 * speedFactor,
+      ballVy: 0.19 * speedFactor,
       playerScore: 0,
       cpuScore: 0,
       status: 'idle',
@@ -90,10 +91,11 @@ export class PongAdapter implements GameAdapter {
   }
 
   private resetBall(dir: number) {
+    const speedFactor = this.difficulty === 'easy' ? 0.9 : this.difficulty === 'hard' ? 1.35 : 1
     this.state.ballX = WIDTH / 2
     this.state.ballY = HEIGHT / 2
-    this.state.ballVx = (0.18 + Math.random() * 0.08) * dir
-    this.state.ballVy = (Math.random() - 0.5) * 0.35
+    this.state.ballVx = (0.18 + Math.random() * 0.08) * speedFactor * dir
+    this.state.ballVy = (Math.random() - 0.5) * 0.35 * speedFactor
   }
 
   render(ctx: CanvasRenderingContext2D) {
